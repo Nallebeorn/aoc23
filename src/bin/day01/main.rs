@@ -1,9 +1,9 @@
-use std::env;
+use std::{env, time::Instant};
 
 const DAY: u32 = 1;
 
 fn solve_a(input: &str) -> i32 {
-    let lines: Vec<Option<i32>> = input.lines().map(|line| line.parse().ok()).collect();
+    let lines = input.lines().map(|line| line.parse::<i32>().ok());
     let mut max = 0;
     let mut acc = 0;
     for line in lines {
@@ -22,7 +22,7 @@ fn solve_a(input: &str) -> i32 {
 }
 
 fn solve_b(input: &str) -> i32 {
-    let lines: Vec<Option<i32>> = input.lines().map(|line| line.parse().ok()).collect();
+    let lines = input.lines().map(|line| line.parse::<i32>().ok());
     let mut elf_calories = Vec::new();
     let mut acc = 0;
     for line in lines {
@@ -44,14 +44,24 @@ fn main() {
 
     if args.is_empty() || args.iter().any(|arg| arg == "a") {
         println!("**** DECEMBER {} (a) ****", DAY);
+        
+        let timer = Instant::now();
         let result = solve_a(include_str!("./input.txt"));
-        println!("{}\n", result)
+        let elapsed = timer.elapsed();
+
+        println!("{}", result);
+        println!("({:?})\n", elapsed);
     }
 
     if args.is_empty() || args.iter().any(|arg| arg == "b") {
         println!("**** DECEMBER {} (b) ****", DAY);
+        
+        let timer = Instant::now();
         let result = solve_b(include_str!("./input.txt"));
-        println!("{}\n", result)
+        let elapsed = timer.elapsed();
+        
+        println!("{}", result);
+        println!("({:?})\n", elapsed);
     }
 }
 
