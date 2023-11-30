@@ -3,7 +3,7 @@ use std::{env, time::Instant};
 const DAY: u32 = 1;
 
 fn solve_a(input: &str) -> i32 {
-    let lines = input.lines().map(|line| line.parse::<i32>().ok());
+    let lines = input.lines().map(|line| line.parse::<i32>().ok()).chain(std::iter::once(None));
     let mut max = 0;
     let mut acc = 0;
     for line in lines {
@@ -22,7 +22,7 @@ fn solve_a(input: &str) -> i32 {
 }
 
 fn solve_b(input: &str) -> i32 {
-    let lines = input.lines().map(|line| line.parse::<i32>().ok());
+    let lines = input.lines().map(|line| line.parse::<i32>().ok()).chain(std::iter::once(None));
     let mut elf_calories = Vec::new();
     let mut acc = 0;
     for line in lines {
@@ -67,7 +67,7 @@ fn main() {
 
 #[cfg(test)]
 #[allow(unused_imports)]
-mod tests {
+mod tests01 {
     use super::*;
     use pretty_assertions::{assert_eq, assert_ne};
 
