@@ -27,7 +27,7 @@ fn verify_game(line: &str) -> bool {
 }
 
 fn solve_a(input: &str) -> usize {
-    input.lines().enumerate().filter(|(i, line)| verify_game(line)).map(|(i, _)| i + 1).sum()
+    input.lines().enumerate().filter(|(_, line)| verify_game(line)).map(|(i, _)| i + 1).sum()
 }
 
 fn calc_cube_power(line: &str) -> u32 {
@@ -38,7 +38,7 @@ fn calc_cube_power(line: &str) -> u32 {
     let mut max_blue = 0;
     for cube in cubes {
         let mut split = cube.split(' ');
-        let count: u32 = split.next().unwrap().parse().ok().unwrap();
+        let count: u32 = split.next().unwrap().parse().unwrap();
         let color = split.next().unwrap();
         match color {
             "red" => max_red = max(max_red, count),
