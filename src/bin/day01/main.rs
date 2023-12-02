@@ -2,83 +2,61 @@ use std::{env, time::Instant};
 
 const DAY: u32 = 1;
 
-fn extract_coordinates(line: &str) -> i32 {
+fn extract_coordinates(line: &str) -> u32 {
     let digits: Vec<char> = line.chars().filter(|c| c.is_digit(10)).collect();
-    let numstr = format!("{}{}", digits.iter().next().unwrap(), digits.iter().rev().next().unwrap());
-    numstr.parse().unwrap()
+    let digit1 = digits.iter().next().unwrap().to_digit(10).unwrap();
+    let digit2 = digits.iter().rev().next().unwrap().to_digit(10).unwrap();
+    digit1 * 10 + digit2
 }
 
-fn solve_a(input: &str) -> i32 {
+fn solve_a(input: &str) -> u32 {
     let lines = input.lines().map(|line| extract_coordinates(line));
     lines.sum()
 }
 
 fn extract_coordinates_b(line: &str) -> u32 {
-
-    let digit1 = find_digit1(line);
-    let digit2 = find_digit2(line);
-    digit1 * 10 + digit2
-}
-
-fn find_digit1(word: &str) -> u32 {
     let word_digits = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
     let digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+
     let mut first_match = usize::MAX;
-    let mut found_digit: Option<u32> = None;
+    let mut last_match = 0;
+
+    let mut left_digit = 0;
+    let mut right_digit = 0;
+
     for i in 0..word_digits.len() {
-        match word.find(word_digits[i]) {
-            Some(index) => {
-                if index < first_match {
-                    first_match = index;
-                    found_digit = Some(i as u32 + 1);
-                }
+        if let Some(index) = line.find(word_digits[i]) {
+            if index < first_match {
+                first_match = index;
+                left_digit = i as u32 + 1;
             }
-            None => {}
         }
 
-        match word.find(digits[i]) {
-            Some(index) => {
-                if index < first_match {
-                    first_match = index;
-                    found_digit = Some(i as u32 + 1);
-                }
+        if let Some(index) = line.find(digits[i]) {
+            if index < first_match {
+                first_match = index;
+                left_digit = i as u32 + 1;
             }
-            None => {}
+        }
+
+        if let Some(index) = line.rfind(word_digits[i]) {
+            if index >= last_match {
+                last_match = index;
+                right_digit = i as u32 + 1;
+            }
+        }
+
+        if let Some(index) = line.rfind(digits[i]) {
+            if index >= last_match {
+                last_match = index;
+                right_digit = i as u32 + 1;
+            }
         }
     }
 
-    found_digit.unwrap()
+    left_digit * 10 + right_digit
 }
 
-fn find_digit2(word: &str) -> u32 {
-    let word_digits = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
-    let digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
-    let mut first_match = 0;
-    let mut found_digit: Option<u32> = None;
-    for i in 0..word_digits.len() {
-        match word.rfind(word_digits[i]) {
-            Some(index) => {
-                if index >= first_match {
-                    first_match = index;
-                    found_digit = Some(i as u32 + 1);
-                }
-            }
-            None => {}
-        }
-
-        match word.rfind(digits[i]) {
-            Some(index) => {
-                if index >= first_match {
-                    first_match = index;
-                    found_digit = Some(i as u32 + 1);
-                }
-            }
-            None => {}
-        }
-    }
-
-    found_digit.unwrap()
-}
 
 fn solve_b(input: &str) -> u32 {
     let lines = input.lines().map(|line| extract_coordinates_b(line));
@@ -113,7 +91,7 @@ fn main() {
 
 #[cfg(test)]
 #[allow(unused_imports)]
-mod tests01 {
+mod tests {
     use super::*;
     use pretty_assertions::{assert_eq, assert_ne};
 
@@ -133,20 +111,6 @@ mod tests01 {
     fn test_extract_coordinates_one_digit() {
         let result = extract_coordinates("treb7uchet");
         assert_eq!(result, 77);
-    }
-
-    #[test]
-    fn test_find_digit1() {
-        assert_eq!(find_digit1("abcfour2threexyz"), 4);
-        assert_eq!(find_digit1("77seven"), 7);
-
-    }
-
-    #[test]
-    fn test_find_digit2() {
-        assert_eq!(find_digit2("abcone2threexyz"), 3);
-        assert_eq!(find_digit2("77eight"), 8);
-
     }
 
     #[test]

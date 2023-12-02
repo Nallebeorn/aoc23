@@ -1,0 +1,83 @@
+use std::{env, time::Instant};
+
+const DAY: u32 = 2;
+
+fn are_balls_possible(count: u32, color: &str) -> bool {
+    match color {
+        "red" => count <= 12,
+        "green" => count <= 13,
+        "blue" => count <= 14,
+        _ => false,
+    }
+}
+
+fn verify_game(line: &str) -> bool {
+    let results = line.split(':').skip(1).next().unwrap();
+    let rounds = results.split(';').map(|round| round.trim());
+    for round in rounds {
+        let balls = round.split(",").map(|b| b.trim());
+        for ball in balls {
+            let mut split = ball.split(' ');
+            let count: u32 = split.next().unwrap().parse().ok().unwrap();
+            let color = split.next().unwrap();
+            if !are_balls_possible(count, color) {
+                return false;
+            }
+        }
+    }
+
+    true
+}
+
+fn solve_a(input: &str) -> usize {
+    input.lines().enumerate().filter(|(i, line)| verify_game(line)).map(|(i, _)| i + 1).sum()
+}
+
+fn solve_b(input: &str) -> u32 {
+    0
+}
+
+fn main() {
+    let args: Vec<String> = env::args().skip(1).map(|arg| arg.to_lowercase()).collect();
+
+    if args.is_empty() || args.iter().any(|arg| arg == "a") {
+        println!("**** DECEMBER {} (a) ****", DAY);
+        
+        let timer = Instant::now();
+        let result = solve_a(include_str!("./input.txt"));
+        let elapsed = timer.elapsed();
+
+        println!("{}", result);
+        println!("({:?})\n", elapsed);
+    }
+
+    if args.is_empty() || args.iter().any(|arg| arg == "b") {
+        println!("**** DECEMBER {} (b) ****", DAY);
+        
+        let timer = Instant::now();
+        let result = solve_b(include_str!("./input.txt"));
+        let elapsed = timer.elapsed();
+        
+        println!("{}", result);
+        println!("({:?})\n", elapsed);
+    }
+}
+
+#[cfg(test)]
+#[allow(unused_imports)]
+mod tests {
+    use super::*;
+    use pretty_assertions::{assert_eq, assert_ne};
+
+    #[test]
+    fn example_a() {
+        let result = solve_a(include_str!("./example_a.txt"));
+        assert_eq!(result, 8);
+    }
+
+    // #[test]
+    // fn example_b() {
+    //     let result = solve_b(include_str!("./example_b.txt"));
+    //     assert_eq!(result, 281);
+    // }
+}
