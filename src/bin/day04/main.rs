@@ -4,8 +4,8 @@ const DAY: u32 = 4;
 
 fn score_game(game: &str) -> usize {
     let mut split = game.split(':').skip(1).next().unwrap().split('|');
-    let winners = split.next().unwrap().split(' ');
-    let have: Vec<&str> = split.next().unwrap().split(' ').collect();
+    let winners = split.next().unwrap().split_ascii_whitespace();
+    let have: Vec<&str> = split.next().unwrap().split_ascii_whitespace().collect();
 
     let num_winners = winners.filter(|num| !num.is_empty() && have.contains(num)).count();
     (0x01 << num_winners) >> 1
@@ -17,10 +17,10 @@ fn solve_a(input: &str) -> usize {
 
 fn score_card_b(game: &str) -> usize {
     let mut split = game.split(':').skip(1).next().unwrap().split('|');
-    let winners = split.next().unwrap().split(' ');
-    let have: Vec<&str> = split.next().unwrap().split(' ').collect();
+    let winners = split.next().unwrap().split_ascii_whitespace();
+    let have: Vec<&str> = split.next().unwrap().split_ascii_whitespace().collect();
 
-    winners.filter(|num| !num.is_empty() && have.contains(num)).count()
+    winners.filter(|num| have.contains(num)).count()
 }
 
 fn solve_b(input: &str) -> usize {
