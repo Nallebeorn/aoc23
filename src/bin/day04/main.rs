@@ -24,13 +24,14 @@ fn score_card_b(game: &str) -> usize {
 }
 
 fn solve_b(input: &str) -> usize {
-    let card_inputs: Vec<&str> = input.lines().collect();
-    let mut cards: Vec<usize> = (0..card_inputs.len()).collect();
+    let card_scores: Vec<usize> = input.lines().map(|card| score_card_b(card)).collect();
+
+    let mut cards: Vec<usize> = (0..card_scores.len()).collect();
 
     let mut i = 0;
     while i < cards.len() {
         let card_number = cards[i];
-        let score = score_card_b(card_inputs[card_number]);
+        let score = card_scores[card_number];
         for card_won in card_number + 1..card_number + 1 + score {
             cards.push(card_won);
         }
