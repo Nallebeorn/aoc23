@@ -77,48 +77,59 @@ fn solve_a(input: &str) -> i64 {
     seeds.iter().map(|seed| trace_seed_to_location(*seed, &maps)).min().unwrap()
 }
 
-fn trace_location_to_seed(location: i64, maps: &Vec<Map>) -> i64 {
-    let mut n = location;
-    if location % 1000000 == 0 {
-        let num_processed = location - 324294413; 
-        let num_total = 4294967296i64 - 324294413i64;
-        println!("{}/{} ({:.3})", num_processed, num_total, num_processed as f64 / num_total as f64);
+fn find_seed_ranges(seeds_input: Vec<i64>) -> Vec<Range<i64>> {
+    let mut ranges = Vec::new();
+    for i in (0..seeds_input.len() - 1).step_by(2) {
+        let start = seeds_input[i];
+        let count = seeds_input[i + 1];
+        ranges.push(start..start + count);
     }
-    for map in maps.iter().rev() {
-        for range in map {
-            if n >= range.dest_start && n < range.dest_end_exclusive {
-                n = n - range.src_to_dest_offset;
-                break;
-            }
+
+    ranges
+}
+
+fn map_num(map: &Vec<RangeMapping>, n: Range<i64>) -> Range<i64> {
+    for range in map {
+        if n.start >= range.src_start && n.start < range.src_end_exclusive {
+            return n.start + range.src_to_dest_offset..n.end + range.src_to_dest_offset;
         }
     }
 
     n
 }
 
-fn find_seed_ranges(seeds_input: Vec<i64>) -> Vec<Range<i64>> {
-    let mut ranges = Vec::new();
-    for i in 0..seeds_input.len() - 1 {
-        ranges.push(seeds_input[i]..seeds_input[i + 1]);
-    }
-
-    ranges
-}
-
-fn is_seed_valid(seed: i64, ranges: &Vec<Range<i64>>) -> bool {
-    ranges.iter().any(|range| range.contains(&seed))
-}
 
 fn solve_b(input: &str) -> i64 {
-    let (seeds, maps) = parse_input(input);
-    let seed_ranges = find_seed_ranges(seeds);
-    let locations = maps.last().unwrap();
-    let min_location = locations.iter().map(|m| m.dest_start).min().unwrap();
-    let max_location = locations.iter().map(|m| m.dest_end_exclusive).max().unwrap();
-    let possible_locations = min_location..max_location + 1;
-    let result = possible_locations.filter(|loc| is_seed_valid(trace_location_to_seed(*loc, &maps), &seed_ranges)).min().unwrap();
+    let (seeds_input, maps) = parse_input(input);
+
+    let seed_ranges = find_seed_ranges(seeds_input);
+    let mut nums = seed_ranges;
+
+    for map in maps {
+        let mut i = 0;
+        while i < nums.len() {
+            let n = nums[i].clone();
+            for range in &map {
+                if n.start >= range.src_start && n.start < range.src_end_exclusive {
+                    if n.end > range.src_end_exclusive {
+                        nums[i].end = range.src_end_exclusive;
+                        nums.push(range.src_end_exclusive..n.end);
+                    }
+                }
+            }
+
+            i += 1;
+        }
+
+        let mut new_nums = Vec::new();
+        for n in nums {
+            new_nums.push(map_num(&map, n));
+        };
+
+        nums = new_nums;
+    }
     
-    result
+    nums.iter().map(|range| range.start).min().unwrap()
 }
 
 fn main() {
