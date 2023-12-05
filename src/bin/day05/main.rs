@@ -6,10 +6,6 @@ const DAY: u32 = 5;
 struct RangeMapping {
     src_start: i64,
     src_end_exclusive: i64,
-
-    dest_start: i64,
-    dest_end_exclusive: i64,
-
     src_to_dest_offset: i64,
 }
 
@@ -45,10 +41,6 @@ fn parse_input(input: &str) -> (Vec<i64>, Vec<Map>) {
             let mapping = RangeMapping {
                 src_start: src_start,
                 src_end_exclusive: src_start + range_len,
-
-                dest_start: dest_start,
-                dest_end_exclusive: dest_start + range_len,
-
                 src_to_dest_offset: dest_start - src_start,
             };
             maps.last_mut().unwrap().push(mapping);
