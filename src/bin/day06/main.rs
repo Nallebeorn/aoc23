@@ -2,7 +2,7 @@ use std::{env, time::Instant};
 
 const DAY: u32 = 6;
 
-fn solve_a(input: &str) -> i64 {
+fn solve_a(input: &str) -> usize {
     let mut lines = input.lines().map(|line| {
         line.split_ascii_whitespace()
             .skip(1)
@@ -17,20 +17,13 @@ fn solve_a(input: &str) -> i64 {
     for i in 0..times.len() {
         let time = times[i];
         let distance = distances[i];
-        let mut possibilites = 0;
-        for speed in 0..time + 1 {
-            if speed * (time - speed) > distance {
-                possibilites += 1;
-            }
-        }
-
-        result *= possibilites;
+        result *= (0..time + 1).filter(|speed| speed * (time - speed) > distance).count();
     }
 
     result
 }
 
-fn solve_b(input: &str) -> i64 {
+fn solve_b(input: &str) -> usize {
     let mut lines = input.lines().map(|line| {
         line.split(':')
             .nth(1)
@@ -43,14 +36,8 @@ fn solve_b(input: &str) -> i64 {
     let time = lines.next().unwrap();
     let distance = lines.next().unwrap();
 
-    let mut result = 0;
-    for speed in 0..time + 1 {
-        if speed * (time - speed) > distance {
-            result += 1;
-        }
-    }
+    (0..time + 1).filter(|speed| speed * (time - speed) > distance).count()
 
-    result
 }
 
 fn main() {
