@@ -49,6 +49,7 @@ fn calc_cube_power(line: &str) -> u32 {
     }
 
     max_red * max_green * max_blue
+    
 }
 
 fn solve_b(input: &str) -> u32 {
