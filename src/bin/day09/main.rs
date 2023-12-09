@@ -22,8 +22,23 @@ fn solve_a(input: &str) -> i32 {
         .map(|nums| interpolate_next_val(nums.collect())).sum()
 }
 
-fn solve_b(input: &str) -> usize {
-    0
+fn interpolate_prev_val(history: Vec<i32>) -> i32 {
+    return if history.iter().all(|n| *n == 0) {
+        0
+    } else {
+        let delta: Vec<i32> = history.windows(2).map(|pair| pair[0] - pair[1]).collect();
+        history.first().unwrap() + interpolate_prev_val(delta)
+    };
+}
+
+fn solve_b(input: &str) -> i32 {
+    input
+    .lines()
+    .map(|line| {
+        line.split_ascii_whitespace()
+            .map(|n| n.parse::<i32>().unwrap())
+    })
+    .map(|nums| interpolate_prev_val(nums.collect())).sum()
 }
 
 fn main() {
@@ -64,9 +79,9 @@ mod tests {
         assert_eq!(result, 114);
     }
 
-    //     #[test]
-    //     fn example_b() {
-    //         let result = solve_b(include_str!("./example_b.txt"));
-    //         assert_eq!(result, 6);
-    //     }
+        #[test]
+        fn example_b() {
+            let result = solve_b(include_str!("./example.txt"));
+            assert_eq!(result, 2);
+        }
 }
