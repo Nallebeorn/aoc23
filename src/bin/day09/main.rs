@@ -1,5 +1,4 @@
-use num::integer::lcm;
-use std::{collections::HashMap, env, time::Instant};
+use std::{env, time::Instant};
 
 const DAY: u32 = 9;
 
