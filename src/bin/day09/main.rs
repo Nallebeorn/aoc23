@@ -18,7 +18,8 @@ fn solve_a(input: &str) -> i32 {
             line.split_ascii_whitespace()
                 .map(|n| n.parse::<i32>().unwrap())
         })
-        .map(|nums| interpolate_next_val(nums.collect())).sum()
+        .map(|nums| interpolate_next_val(nums.collect()))
+        .sum()
 }
 
 fn interpolate_prev_val(history: Vec<i32>) -> i32 {
@@ -32,12 +33,13 @@ fn interpolate_prev_val(history: Vec<i32>) -> i32 {
 
 fn solve_b(input: &str) -> i32 {
     input
-    .lines()
-    .map(|line| {
-        line.split_ascii_whitespace()
-            .map(|n| n.parse::<i32>().unwrap())
-    })
-    .map(|nums| interpolate_prev_val(nums.collect())).sum()
+        .lines()
+        .map(|line| {
+            line.split_ascii_whitespace()
+                .map(|n| n.parse::<i32>().unwrap())
+        })
+        .map(|nums| interpolate_prev_val(nums.collect()))
+        .sum()
 }
 
 fn main() {
@@ -78,9 +80,9 @@ mod tests {
         assert_eq!(result, 114);
     }
 
-        #[test]
-        fn example_b() {
-            let result = solve_b(include_str!("./example.txt"));
-            assert_eq!(result, 2);
-        }
+    #[test]
+    fn example_b() {
+        let result = solve_b(include_str!("./example.txt"));
+        assert_eq!(result, 2);
+    }
 }
