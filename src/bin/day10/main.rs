@@ -131,6 +131,16 @@ fn solve_b(input: &str) -> i32 {
     }
 
     grid[start_idx] = Some((start_con_a.unwrap(), start_con_b.unwrap()));
+    src_grid[start_idx] = match neighbours {
+        0b0011 => 'L',
+        0b0101 => '|',
+        0b1001 => 'J',
+        0b0110 => 'F',
+        0b1010 => '-',
+        0b1100 => '7',
+        _ => panic!()
+    };
+
     let mut is_loop = vec![false; width * height];
     let mut index = start_idx;
     let mut prev = start_idx;
@@ -179,7 +189,7 @@ fn solve_b(input: &str) -> i32 {
         }
     }
 
-    print!("{}", debug);
+    // println!("{}", debug);
 
     num_inside
 }
