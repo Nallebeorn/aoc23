@@ -108,7 +108,8 @@ fn solve_b(input: &str) -> i32 {
     let start_idx = get_idx(startx, starty);
     let mut start_con_a = None;
     let mut start_con_b = None;
-    for (ofsx, ofsy) in possible_connections {
+    let mut neighbours = 0b0000;
+    for (i, (ofsx, ofsy)) in possible_connections.iter().enumerate() {
         let (x, y) = (startx + ofsx, starty + ofsy);
         let idx = get_idx(x, y);
         if idx < grid.len() {
@@ -116,9 +117,11 @@ fn solve_b(input: &str) -> i32 {
                 if a == start_idx || b == start_idx {
                     if start_con_a.is_none() {
                         start_con_a = Some(get_idx(x, y));
+                        neighbours |= 1 << i;
                     } else {
                         if get_idx(x, y) != start_con_a.unwrap() {
                             start_con_b = Some(get_idx(x, y));
+                            neighbours |= 1 << i;
                             break;
                         }
                     }
@@ -128,7 +131,6 @@ fn solve_b(input: &str) -> i32 {
     }
 
     grid[start_idx] = Some((start_con_a.unwrap(), start_con_b.unwrap()));
-
     let mut is_loop = vec![false; width * height];
     let mut index = start_idx;
     let mut prev = start_idx;
@@ -161,16 +163,10 @@ fn solve_b(input: &str) -> i32 {
         let mut check_idx = index as i32 - width as i32;
         while check_idx > 0 {
             if is_loop[check_idx as usize] {
-                if src_grid[check_idx as usize] != '|' {
-                    num_crossings += 1;
-                }
-                loop {
-                    let (a, b) = grid[check_idx as usize].unwrap();
-                    if !(a == check_idx as usize - width || b == check_idx as usize - width) {
-                        break;
-                    }
-                    check_idx -= width as i32;
-                }
+                match src_grid[check_idx as usize] {
+                    '-' | '7' | 'J' => num_crossings += 1,
+                    _ => ()
+                };
             }
             check_idx -= width as i32;
         }
@@ -236,5 +232,11 @@ mod tests {
     fn example_b_2() {
         let result = solve_b(include_str!("./example_b_2.txt"));
         assert_eq!(result, 8);
+    }
+
+    #[test]
+    fn example_b_3() {
+        let result = solve_b(include_str!("./example_b_3.txt"));
+        assert_eq!(result, 10);
     }
 }
