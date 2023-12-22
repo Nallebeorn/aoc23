@@ -3,8 +3,8 @@ use std::{env, time::Instant};
 const DAY: u32 = 12;
 
 #[derive(Debug)]
-struct Line<'a> {
-    conditions: &'a str,
+struct Line {
+    conditions: String,
     summary: Vec<i32>,
 }
 
@@ -39,13 +39,22 @@ fn parse_line(line: &str) -> Line {
     let mut split = line.split_ascii_whitespace();
 
     Line {
-        conditions: split.next().unwrap(),
+        conditions: split.next().unwrap().to_string(),
         summary: split
             .next()
             .unwrap()
             .split(',')
             .map(|c| c.parse().unwrap())
             .collect(),
+    }
+}
+
+fn parse_line_b(line: &str) -> Line {
+    let base = parse_line(line);
+    let repeat = [base.conditions.as_str()].repeat(5);
+    Line {
+        conditions: repeat.join("?"),
+        summary: base.summary.repeat(5),
     }
 }
 
@@ -90,11 +99,13 @@ fn are_vectors_same(a: &Vec<i32>, b: &Vec<i32>) -> bool {
 fn solve_a(input: &str) -> usize {
     let lines = input.lines().map(|line| parse_line(line));
 
-    lines.map(|line| get_num_arrangements(line.conditions, &line.summary)).sum()
+    lines.map(|line| get_num_arrangements(&line.conditions, &line.summary)).sum()
 }
 
-fn solve_b(input: &str) -> i64 {
-    0
+fn solve_b(input: &str) -> usize {
+    let lines = input.lines().map(|line| parse_line_b(line));
+
+    lines.map(|line| get_num_arrangements(&line.conditions, &line.summary)).sum()
 }
 
 fn main() {
@@ -163,8 +174,8 @@ mod tests {
 
     #[test]
     fn test_get_num_arrangements() {
-        let line = Line{conditions: "????.######..#####.", summary: vec![1, 6, 5] };
-        let result = get_num_arrangements(line.conditions, &line.summary);
+        let line = Line{conditions: "????.######..#####.".to_string(), summary: vec![1, 6, 5] };
+        let result = get_num_arrangements(&line.conditions, &line.summary);
         assert_eq!(result, 4);
     }
 
